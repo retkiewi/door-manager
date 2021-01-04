@@ -12,7 +12,6 @@ export const LoginBox: FC<{
     if (login === "admin" && password === "123") {
       props.setIsLoggedIn(true);
     } else {
-      console.log("cipa");
       setIsWrongPassword(true);
     }
   }

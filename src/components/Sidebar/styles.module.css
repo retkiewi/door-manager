@@ -1,0 +1,12 @@
+.SideBar{
+    top: 0;
+    left: 0;
+    background-color: #3a5391;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    flex-basis: 185px;
+    padding-top: 20px;
+    padding-bottom: 30px;
+}
+
