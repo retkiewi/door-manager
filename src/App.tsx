@@ -14,7 +14,7 @@ function App() {
     1: UserManagerView,
   }
 
-  const CurrentView = viewMap[1]
+  const CurrentView = viewMap[0]
   return (
     <div className="App">
       {!isLoggedIn ? (

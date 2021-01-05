@@ -13,8 +13,9 @@ import {
 } from "@material-ui/core";
 import {FC, useState} from "react";
 import styles from "../DoorManagerView/styles.module.css";
-
-
+import firebase from "firebase";
+import {useCollection, useCollectionData} from "react-firebase-hooks/firestore";
+import {firebaseApp} from "../../firebaseApp";
 
 export const UserManagerView: FC = (props) => {
   type User = {
@@ -58,17 +59,20 @@ export const UserManagerView: FC = (props) => {
 
   const [hasAccessFilter, setHasAccessFilter] = useState(false);
 
-  const [users, setUsers] = useState<User[]>(rows);
+  const [loadedUsers, loading, error] = useCollection(firebaseApp.firestore().collection('Users'));
+  console.log(loadedUsers);
 
-  const onCheckboxChange = (index) => {
-    const arrayCopy = [...users];
-    arrayCopy[index] = {
-      ...arrayCopy[index],
-      hasAccess: !users[index].hasAccess,
-    };
-    console.log(arrayCopy);
-    setUsers(arrayCopy);
-  };
+
+
+  // const onCheckboxChange = (index) => {
+  //   const arrayCopy = [...loadedUsers];
+  //   arrayCopy[index] = {
+  //     ...arrayCopy[index],
+  //     hasAccess: !loadedUsers[index].hasAccess,
+  //   };
+  //   console.log(arrayCopy);
+  //   setUsers(arrayCopy);
+  // };
   return (
       <div className={styles.DoorManagerView}>
         <TableContainer component={Paper}>
@@ -108,15 +112,15 @@ export const UserManagerView: FC = (props) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {users.map((row, i) =>
-                  applyFilter(row.name, nameFilter) &&
-                  applyFilter(row.surname, surnameFilter) &&
-                  applyFilter(row.cardId, cardIdFilter) &&
+              {loadedUsers && loadedUsers.docs && (loadedUsers.docs as any).map((row, i) =>
+                  applyFilter(row.Name, nameFilter) &&
+                  applyFilter(row.Surname, surnameFilter) &&
+                  // applyFilter(row.cardId, cardIdFilter) &&
                   row.hasAccess === hasAccessFilter ? (
-                      <TableRow key={row.cardId}>
-                        <MyTableCell>{row.name}</MyTableCell>
-                        <MyTableCell>{row.surname}</MyTableCell>
-                        <MyTableCell>{row.cardId}</MyTableCell>
+                      <TableRow key={row.id}>
+                        <MyTableCell>{row.Name}</MyTableCell>
+                        <MyTableCell>{row.Surname}</MyTableCell>
+                        {<MyTableCell>{row.CardID}</MyTableCell>}
                         <TableCell align="center">
                           <Button variant={"contained"}>Remove</Button>
                         </TableCell>
