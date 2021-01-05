@@ -14,7 +14,9 @@ import {
 import {FC, useState} from "react";
 import styles from "../DoorManagerView/styles.module.css";
 
-
+function capitalize(s:string){
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
 
 export const UserManagerView: FC = (props) => {
   type User = {
@@ -56,18 +58,43 @@ export const UserManagerView: FC = (props) => {
 
   const [cardIdFilter, setCardIdFilter] = useState("");
 
-  const [hasAccessFilter, setHasAccessFilter] = useState(false);
-
   const [users, setUsers] = useState<User[]>(rows);
 
-  const onCheckboxChange = (index) => {
-    const arrayCopy = [...users];
-    arrayCopy[index] = {
-      ...arrayCopy[index],
-      hasAccess: !users[index].hasAccess,
-    };
-    console.log(arrayCopy);
+  const [incorrectName, setIncorrectName] = useState(false);
+
+  const [incorrectSurname, setIncorrectSurname] = useState(false);
+
+  const [incorrectCardId, setIncorrectCardId] = useState(false);
+
+  const onAdd = () => {
+    if(nameFilter.length <=0){
+      setIncorrectName(true);
+      return;
+    }
+
+    if(surnameFilter.length <=0){
+      setIncorrectSurname(true);
+      return;
+    }
+
+    if(!/^((\d|[A-F]){2}:){3}(\d|[A-F]){2}$/i.test(cardIdFilter)){
+      setIncorrectCardId(true);
+      return;
+    }
+
+    const arrayCopy = [...users, createUserData(capitalize(nameFilter), capitalize(surnameFilter), cardIdFilter, false)];
     setUsers(arrayCopy);
+
+    setNameFilter("");
+    setSurnameFilter("");
+    setCardIdFilter("");
+  };
+
+  const onRemove = (index) => {
+    console.log(index);
+    const arrayCopy = [...users];
+    console.log(arrayCopy);
+    setUsers(arrayCopy.filter((x, i) => i!==index));
   };
   return (
       <div className={styles.DoorManagerView}>
@@ -81,7 +108,11 @@ export const UserManagerView: FC = (props) => {
                       size={"small"}
                       label={"Name"}
                       value={nameFilter}
-                      onChange={(e) => setNameFilter(e.target.value)}
+                      onChange={(e) => {
+                        setNameFilter(e.target.value);
+                        setIncorrectName(false)
+                      }}
+                      error={incorrectName}
                   />
                 </TableCell>
                 <TableCell>
@@ -90,7 +121,11 @@ export const UserManagerView: FC = (props) => {
                       size={"small"}
                       label={"Surname"}
                       value={surnameFilter}
-                      onChange={(e) => setSurnameFilter(e.target.value)}
+                      onChange={(e) => {
+                        setSurnameFilter(e.target.value);
+                        setIncorrectSurname(false);
+                      }}
+                      error={incorrectSurname}
                   />
                 </TableCell>
                 <TableCell>
@@ -99,11 +134,15 @@ export const UserManagerView: FC = (props) => {
                       size={"small"}
                       label={"Card ID"}
                       value={cardIdFilter}
-                      onChange={(e) => setCardIdFilter(e.target.value)}
+                      onChange={(e) => {
+                        setCardIdFilter(e.target.value);
+                        setIncorrectCardId(false);
+                      }}
+                      error={incorrectCardId}
                   />
                 </TableCell>
                 <TableCell align="center">
-                        <Button variant={"contained"}>ADD</Button>
+                        <Button variant={"contained"} onClick={onAdd}>ADD</Button>
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -111,14 +150,13 @@ export const UserManagerView: FC = (props) => {
               {users.map((row, i) =>
                   applyFilter(row.name, nameFilter) &&
                   applyFilter(row.surname, surnameFilter) &&
-                  applyFilter(row.cardId, cardIdFilter) &&
-                  row.hasAccess === hasAccessFilter ? (
+                  applyFilter(row.cardId, cardIdFilter) ? (
                       <TableRow key={row.cardId}>
                         <MyTableCell>{row.name}</MyTableCell>
                         <MyTableCell>{row.surname}</MyTableCell>
                         <MyTableCell>{row.cardId}</MyTableCell>
                         <TableCell align="center">
-                          <Button variant={"contained"}>Remove</Button>
+                          <Button variant={"contained"} onClick={() => onRemove(i)}>Remove</Button>
                         </TableCell>
                       </TableRow>
                   ) : null

@@ -25,7 +25,7 @@ export const Sidebar: FC<{
     <div className={styles.SideBar}>
       <MenuButton
         variant={"contained"}
-        color={props.currentView===1?"primary":"secondary"}
+        color={props.currentView===1?"primary":"default"}
         className={styles.MenuButton}
         onClick={() => props.setCurrentView(0)}
       >
@@ -33,7 +33,7 @@ export const Sidebar: FC<{
       </MenuButton>
       <MenuButton
         variant={"contained"}
-        color={props.currentView===0?"primary":"secondary"}
+        color={props.currentView===0?"primary":"default"}
         className={styles.MenuButton}
         onClick={() => props.setCurrentView(1)}
       >
