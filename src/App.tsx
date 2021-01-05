@@ -8,21 +8,22 @@ import { UserManagerView} from "./components/UserManagerView";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [currentView, setCurrentView] = useState(0)
 
   const viewMap = {
     0: DoorManagerView,
     1: UserManagerView,
   }
 
-  const CurrentView = viewMap[1]
+  const CurrentViewComponent = viewMap[currentView]
   return (
     <div className="App">
       {!isLoggedIn ? (
         <LoginBox isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
       ) : (
         <div className="MainFrame">
-          <Sidebar isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}></Sidebar>
-          <CurrentView></CurrentView>
+          <Sidebar isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} currentView={currentView} setCurrentView={setCurrentView}/>
+          <CurrentViewComponent/>
         </div>
       )}
     </div>
