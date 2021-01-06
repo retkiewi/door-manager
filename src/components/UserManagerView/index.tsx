@@ -18,21 +18,6 @@ import {useCollection, useCollectionData} from "react-firebase-hooks/firestore";
 import {firebaseApp} from "../../firebaseApp";
 
 export const UserManagerView: FC = (props) => {
-  type User = {
-    name: string;
-    surname: string;
-    cardID: string;
-    hasAccess: boolean;
-  };
-
-  // function createUserData(
-  //     name: string,
-  //     surname: string,
-  //     cardID: string,
-  //     hasAccess: boolean
-  // ) {
-  //   return { name: name, surname: surname, cardID: cardID, hasAccess: hasAccess };
-  // }
 
   const MyTableCell = styled(TableCell)({
     paddingLeft: "25px",
@@ -52,25 +37,7 @@ export const UserManagerView: FC = (props) => {
 
   const [hasAccessFilter, setHasAccessFilter] = useState(false);
 
-  // const usersCollection = firebaseApp.firestore().collection("Users");
-  //
-  // const loadedUsers = (await usersCollection.get()).docs;
-  // const [loadedUsers, loading, error] = useCollection(firebaseApp.firestore().collection('Users'));
-
-  // const [users, setUsers] = useState<User[]>(loadedUsers);
-
-  // console.log(loadedUsers[0].data().name);
-  // console.log(loadedUsers[0].id);
-
-  // const onCheckboxChange = (index) => {
-  //   const arrayCopy = [...loadedUsers];
-  //   arrayCopy[index] = {
-  //     ...arrayCopy[index],
-  //     hasAccess: !loadedUsers[index].hasAccess,
-  //   };
-  //   console.log(arrayCopy);
-  //   setUsers(arrayCopy);
-  // };
+  const [loadedUsers, loading, error] = useCollection(firebaseApp.firestore().collection('Users'));
 
   return (
       <div className={styles.DoorManagerView}>
@@ -111,25 +78,26 @@ export const UserManagerView: FC = (props) => {
               </TableRow>
             </TableHead>
             <TableBody>
+              {loading ? <div>Loading data</div> : (loadedUsers && loadedUsers?.docs && (loadedUsers?.docs as any).map((row, i) =>
+                  applyFilter(row.data().name, nameFilter) &&
+                  applyFilter(row.data().surname, surnameFilter) &&
+                  applyFilter(row.data().cardID, cardIdFilter) &&
+                  row.data().hasAccess === hasAccessFilter ? (
+                      <TableRow key={row.data().cardID}>
+                        <MyTableCell>{row.data().name}</MyTableCell>
+                        <MyTableCell>{row.data().surname}</MyTableCell>
+                        {<MyTableCell>{row.data().cardID}</MyTableCell>}
 
+                        <TableCell align="center">
+                          <Button variant={"contained"}>Remove</Button>
+                        </TableCell>
+
+                      </TableRow>
+                  ) : null
+              ))}
             </TableBody>
           </Table>
         </TableContainer>
       </div>
   );
-  // {users.map((row, i) =>
-  //     applyFilter(row.name, nameFilter) &&
-  //     applyFilter(row.surname, surnameFilter) &&
-  //     applyFilter(row.cardID, cardIdFilter) &&
-  //     row.hasAccess === hasAccessFilter ? (
-  //         <TableRow key={row.cardID}>
-  //           <MyTableCell>{row.name}</MyTableCell>
-  //           <MyTableCell>{row.surname}</MyTableCell>
-  //           {<MyTableCell>{row.cardID}</MyTableCell>}
-  //           <TableCell align="center">
-  //             <Button variant={"contained"}>Remove</Button>
-  //           </TableCell>
-  //         </TableRow>
-  //     ) : null
-  // )}
 };

@@ -15,21 +15,6 @@ import {useCollection, useCollectionData} from "react-firebase-hooks/firestore";
 import {firebaseApp} from "../../firebaseApp";
 
 export const ManageAccessTab: FC = (props) => {
-  type User = {
-    name: string;
-    surname: string;
-    cardID: string;
-    hasAccess: boolean;
-  };
-
-  function createUserData(
-      name: string,
-      surname: string,
-      cardID: string,
-      hasAccess: boolean
-  ) {
-    return { name: name, surname: surname, cardID: cardID, hasAccess: hasAccess };
-  }
 
   const MyTableCell = styled(TableCell)({
     paddingLeft: "25px",
@@ -51,29 +36,10 @@ export const ManageAccessTab: FC = (props) => {
 
   const [loadedUsers, loading, error] = useCollection(firebaseApp.firestore().collection('Users'));
 
-  const rows = loadedUsers?.docs.map( (doc) => {
-    let user = doc.data();
-      console.log(user.name);
-      console.log(user.surname);
-      console.log(user.cardID);
-      console.log(user.hasAccess);
-    return createUserData(user.name,user.surname,user.cardID,user.hasAccess);
-  });
-  console.log(rows?.length);
-
-  const [users, setUsers] = useState<User[]>(rows);
-
-  const onCheckboxChange = (index) => {
-    const arrayCopy = [...users];
-    arrayCopy[index] = {
-      ...arrayCopy[index],
-      hasAccess: !users[index].hasAccess,
-    };
-    console.log(arrayCopy);
-    setUsers(arrayCopy);
+  const onCheckboxChange = (index, value) => {
+    firebaseApp.firestore().collection('Users').doc(index).set({"hasAccess" : value}, {merge:true})
   };
 
-//{loadedUsers && loadedUsers?.docs && (loadedUsers?.docs as any).map((row, i) =>
   return (
       <div>
         <TableContainer component={Paper}>
@@ -122,26 +88,26 @@ export const ManageAccessTab: FC = (props) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {users?.map((row, i) =>
-                  applyFilter(row.name, nameFilter) &&
-                  applyFilter(row.surname, surnameFilter) &&
-                  applyFilter(row.cardID, cardIdFilter) &&
-                  row.hasAccess === hasAccessFilter ? (
-                      <TableRow key={row.cardID}>
-                        <MyTableCell>{row.name}</MyTableCell>
-                        <MyTableCell>{row.surname}</MyTableCell>
-                        {<MyTableCell>{row.cardID}</MyTableCell>}
+              {loading ? <div>Loading data</div> : (loadedUsers && loadedUsers?.docs && (loadedUsers?.docs as any).map((row, i) =>
+                  applyFilter(row.data().name, nameFilter) &&
+                  applyFilter(row.data().surname, surnameFilter) &&
+                  applyFilter(row.data().cardID, cardIdFilter) &&
+                  row.data().hasAccess === hasAccessFilter ? (
+                      <TableRow key={row.data().cardID}>
+                        <MyTableCell>{row.data().name}</MyTableCell>
+                        <MyTableCell>{row.data().surname}</MyTableCell>
+                        {<MyTableCell>{row.data().cardID}</MyTableCell>}
 
                         <TableCell align="center">
                           <Checkbox
-                              checked={row.hasAccess}
-                              onChange={() => onCheckboxChange(i)}
+                              checked={row.data().hasAccess}
+                              onChange={() => onCheckboxChange(row.id,!row.data().hasAccess)}
                           />
                         </TableCell>
 
                       </TableRow>
                   ) : null
-              )}
+              ))}
             </TableBody>
           </Table>
         </TableContainer>
