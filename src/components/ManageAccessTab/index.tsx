@@ -19,20 +19,20 @@ import {firebaseApp} from "../../firebaseApp";
 
 export const ManageAccessTab: FC = (props) => {
   type User = {
-    name: string;
-    surname: string;
-    cardId: string;
-    hasAccess: boolean;
+    Name: string;
+    Surname: string;
+    CardID: string;
+    HasAccess: boolean;
   };
 
-  function createUserData(
-      name: string,
-      surname: string,
-      cardId: string,
-      hasAccess: boolean
-  ) {
-    return { name: name, surname: surname, cardId: cardId, hasAccess: hasAccess };
-  }
+  // function createUserData(
+  //     Name: string,
+  //     Surname: string,
+  //     CardID: string,
+  //     HasAccess: boolean
+  // ) {
+  //   return { Name: Name, Surname: Surname, CardID: CardID, HasAccess: HasAccess };
+  // }
 
   const MyTableCell = styled(TableCell)({
     paddingLeft: "25px",
@@ -54,15 +54,16 @@ export const ManageAccessTab: FC = (props) => {
 
   const [loadedUsers, loading, error] = useCollection(firebaseApp.firestore().collection('Users'));
 
+  const [users, setUsers] = useState<User[]>(loadedUsers?.docs);
+  
   console.log(loadedUsers?.docs[0].data());
   console.log(loadedUsers?.docs[0].id);
-  console.log(loadedUsers?.docs);
 
   const onCheckboxChange = (index) => {
     const arrayCopy = [...loadedUsers];
     arrayCopy[index] = {
       ...arrayCopy[index],
-      hasAccess: !loadedUsers[index].HasAccess,
+      HasAccess: !loadedUsers[index].HasAccess,
     };
     console.log(arrayCopy);
     setUsers(arrayCopy);
@@ -116,11 +117,12 @@ export const ManageAccessTab: FC = (props) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {loadedUsers && loadedUsers?.docs && (loadedUsers?.docs as any).map((row, i) =>
-                  // applyFilter(row.Name, nameFilter) &&
-                  // applyFilter(row.Surname, surnameFilter) &&
-                  // applyFilter(row.cardId, cardIdFilter) &&
-                  row.hasAccess === hasAccessFilter ? (
+              {/*{loadedUsers && loadedUsers?.docs && (loadedUsers?.docs as any).map((row, i) =>*/}
+              {users.map((row, i) =>
+                  applyFilter(row.Name, nameFilter) &&
+                  applyFilter(row.Surname, surnameFilter) &&
+                  applyFilter(row.CardID, cardIdFilter) &&
+                  row.HasAccess === hasAccessFilter ? (
                       <TableRow key={row.CardID}>
                         <MyTableCell>{row.Name}</MyTableCell>
                         <MyTableCell>{row.Surname}</MyTableCell>

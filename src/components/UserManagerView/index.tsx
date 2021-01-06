@@ -19,27 +19,20 @@ import {firebaseApp} from "../../firebaseApp";
 
 export const UserManagerView: FC = (props) => {
   type User = {
-    name: string;
-    surname: string;
-    cardId: string;
-    hasAccess: boolean;
+    Name: string;
+    Surname: string;
+    CardID: string;
+    HasAccess: boolean;
   };
 
-  function createUserData(
-      name: string,
-      surname: string,
-      cardId: string,
-      hasAccess: boolean
-  ) {
-    return { name: name, surname: surname, cardId: cardId, hasAccess: hasAccess };
-  }
-
-  const rows = [
-    createUserData("Adam", "Kowalski", "1234:1234:1234", true),
-    createUserData("Zbigniew", "Nowak", "2234:1234:1234", false),
-    createUserData("Andrzej", "Jakiś", "2234:3234:1234", true),
-    createUserData("Paweł", "Inny", "4234:3234:4234", false),
-  ];
+  // function createUserData(
+  //     Name: string,
+  //     Surname: string,
+  //     CardID: string,
+  //     HasAccess: boolean
+  // ) {
+  //   return { Name: Name, Surname: Surname, CardID: CardID, HasAccess: HasAccess };
+  // }
 
   const MyTableCell = styled(TableCell)({
     paddingLeft: "25px",
@@ -60,19 +53,22 @@ export const UserManagerView: FC = (props) => {
   const [hasAccessFilter, setHasAccessFilter] = useState(false);
 
   const [loadedUsers, loading, error] = useCollection(firebaseApp.firestore().collection('Users'));
-  console.log(loadedUsers);
 
+  const [users, setUsers] = useState<User[]>(loadedUsers?.docs);
 
+  console.log(loadedUsers?.docs[0].data());
+  console.log(loadedUsers?.docs[0].id);
 
-  // const onCheckboxChange = (index) => {
-  //   const arrayCopy = [...loadedUsers];
-  //   arrayCopy[index] = {
-  //     ...arrayCopy[index],
-  //     hasAccess: !loadedUsers[index].hasAccess,
-  //   };
-  //   console.log(arrayCopy);
-  //   setUsers(arrayCopy);
-  // };
+  const onCheckboxChange = (index) => {
+    const arrayCopy = [...loadedUsers];
+    arrayCopy[index] = {
+      ...arrayCopy[index],
+      HasAccess: !loadedUsers[index].HasAccess,
+    };
+    console.log(arrayCopy);
+    setUsers(arrayCopy);
+  };
+  
   return (
       <div className={styles.DoorManagerView}>
         <TableContainer component={Paper}>
@@ -115,8 +111,8 @@ export const UserManagerView: FC = (props) => {
               {loadedUsers && loadedUsers.docs && (loadedUsers.docs as any).map((row, i) =>
                   applyFilter(row.Name, nameFilter) &&
                   applyFilter(row.Surname, surnameFilter) &&
-                  // applyFilter(row.cardId, cardIdFilter) &&
-                  row.hasAccess === hasAccessFilter ? (
+                  applyFilter(row.CardID, cardIdFilter) &&
+                  row.HasAccess === hasAccessFilter ? (
                       <TableRow key={row.id}>
                         <MyTableCell>{row.Name}</MyTableCell>
                         <MyTableCell>{row.Surname}</MyTableCell>
