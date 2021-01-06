@@ -50,7 +50,7 @@ export const ManageAccessTab: FC = (props) => {
                   <TextField
                       variant={"outlined"}
                       size={"small"}
-                      label={"name"}
+                      label={"Name"}
                       value={nameFilter}
                       onChange={(e) => setNameFilter(e.target.value)}
                   />
@@ -59,7 +59,7 @@ export const ManageAccessTab: FC = (props) => {
                   <TextField
                       variant={"outlined"}
                       size={"small"}
-                      label={"surname"}
+                      label={"Surname"}
                       value={surnameFilter}
                       onChange={(e) => setSurnameFilter(e.target.value)}
                   />
