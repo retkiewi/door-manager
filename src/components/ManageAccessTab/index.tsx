@@ -59,6 +59,7 @@ export const ManageAccessTab: FC = (props) => {
       console.log(user.hasAccess);
     return createUserData(user.name,user.surname,user.cardID,user.hasAccess);
   });
+  console.log(rows?.length);
 
   const [users, setUsers] = useState<User[]>(rows);
 
