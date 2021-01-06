@@ -93,7 +93,7 @@ export const ManageAccessTab: FC = (props) => {
                   applyFilter(row.data().surname, surnameFilter) &&
                   applyFilter(row.data().cardID, cardIdFilter) &&
                   row.data().hasAccess === hasAccessFilter ? (
-                      <TableRow key={row.data().cardID}>
+                      <TableRow key={row.id}>
                         <MyTableCell>{row.data().name}</MyTableCell>
                         <MyTableCell>{row.data().surname}</MyTableCell>
                         {<MyTableCell>{row.data().cardID}</MyTableCell>}

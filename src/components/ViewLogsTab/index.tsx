@@ -1,45 +1,41 @@
 import {Paper, styled, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@material-ui/core";
 import {FC} from "react";
-
-const MyTableCell = styled(TableCell)({
-    paddingLeft: "25px",
-});
-
-function createLogsData(
-    date: string,
-    time: string,
-    name: string,
-    surname: string,
-    cardId: string
-) {
-    return {date: date, time: time, name: name, surname: surname, cardId: cardId};
-}
-
-const logs = [
-    createLogsData("10.09.2020", "12:00:34", "Adam", "Kowalski", "1234:1234:1234")
-];
+import {useCollection, useCollectionData} from "react-firebase-hooks/firestore";
+import {firebaseApp} from "../../firebaseApp";
 
 export const ViewLogsTab: FC = (props) => {
+
+    const MyTableCell = styled(TableCell)({
+        paddingLeft: "25px",
+    });
+
+    const [loadedLogs, loading, error] = useCollection(firebaseApp.firestore().collection('Logs'));
+
+    function getDate(value) {
+        const date = new Date(value);
+        return date.toDateString() + " " + date.getHours() + ":" + date.getMinutes() + ":" +date.getSeconds();
+    }
+
     return <div>
         <TableContainer component={Paper}>
             <Table>
                 <TableHead>
                     <TableRow>
-                        <TableCell>Time</TableCell>
-                        <TableCell>Date</TableCell>
+                        <TableCell>Date and Time</TableCell>
                         <TableCell>Name</TableCell>
                         <TableCell>Surname</TableCell>
                         <TableCell>Card ID</TableCell>
+                        <TableCell>Access</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {logs.map((row, i) => (
-                        <TableRow key={i}>
-                            <MyTableCell>{row.time}</MyTableCell>
-                            <MyTableCell>{row.date}</MyTableCell>
-                            <MyTableCell>{row.name}</MyTableCell>
-                            <MyTableCell>{row.surname}</MyTableCell>
-                            <MyTableCell>{row.cardId}</MyTableCell>
+                    {loading ? <div>Loading data</div> : (loadedLogs && loadedLogs?.docs && (loadedLogs?.docs as any).map((row, i) =>
+                        <TableRow key={row.id}>
+                            <MyTableCell>{getDate(row.data().time.seconds * 1000)}</MyTableCell>
+                            <MyTableCell>{row.data().name}</MyTableCell>
+                            <MyTableCell>{row.data().surname}</MyTableCell>
+                            <MyTableCell>{row.data().cardID}</MyTableCell>
+                            <MyTableCell>{row.data().access}</MyTableCell>
                         </TableRow>
                     ))}
                 </TableBody>
