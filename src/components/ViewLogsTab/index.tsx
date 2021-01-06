@@ -13,7 +13,23 @@ export const ViewLogsTab: FC = (props) => {
 
     function getDate(value) {
         const date = new Date(value);
-        return date.toDateString() + " " + date.getHours() + ":" + date.getMinutes() + ":" +date.getSeconds();
+        let hour = "", minute = "", second = "";
+        if(date.getHours() < 10)
+            hour = "0"+date.getHours().toString();
+        else
+            hour = date.getHours().toString();
+
+        if(date.getMinutes() < 10)
+            minute = "0"+date.getMinutes().toString();
+        else
+            minute = date.getMinutes().toString();
+
+        if(date.getSeconds() < 10)
+            second = "0"+date.getSeconds().toString();
+        else
+            second = date.getSeconds().toString();
+
+        return date.toDateString() + " " + hour + ":" + minute + ":" + second;
     }
 
     return <div>
