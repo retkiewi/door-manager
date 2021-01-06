@@ -12,27 +12,24 @@ import {
 } from "@material-ui/core";
 import {FC, useState} from "react";
 import {useCollection, useCollectionData} from "react-firebase-hooks/firestore";
-import firebase from "firebase";
 import {firebaseApp} from "../../firebaseApp";
-
-
 
 export const ManageAccessTab: FC = (props) => {
   type User = {
-    Name: string;
-    Surname: string;
-    CardID: string;
-    HasAccess: boolean;
+    name: string;
+    surname: string;
+    cardID: string;
+    hasAccess: boolean;
   };
 
-  // function createUserData(
-  //     Name: string,
-  //     Surname: string,
-  //     CardID: string,
-  //     HasAccess: boolean
-  // ) {
-  //   return { Name: Name, Surname: Surname, CardID: CardID, HasAccess: HasAccess };
-  // }
+  function createUserData(
+      name: string,
+      surname: string,
+      cardID: string,
+      hasAccess: boolean
+  ) {
+    return { name: name, surname: surname, cardID: cardID, hasAccess: hasAccess };
+  }
 
   const MyTableCell = styled(TableCell)({
     paddingLeft: "25px",
@@ -54,21 +51,28 @@ export const ManageAccessTab: FC = (props) => {
 
   const [loadedUsers, loading, error] = useCollection(firebaseApp.firestore().collection('Users'));
 
-  const [users, setUsers] = useState<User[]>(loadedUsers?.docs);
-  
-  console.log(loadedUsers?.docs[0].data());
-  console.log(loadedUsers?.docs[0].id);
+  const rows = loadedUsers?.docs.map( (doc) => {
+    let user = doc.data();
+      console.log(user.name);
+      console.log(user.surname);
+      console.log(user.cardID);
+      console.log(user.hasAccess);
+    return createUserData(user.name,user.surname,user.cardID,user.hasAccess);
+  });
+
+  const [users, setUsers] = useState<User[]>(rows);
 
   const onCheckboxChange = (index) => {
-    const arrayCopy = [...loadedUsers];
+    const arrayCopy = [...users];
     arrayCopy[index] = {
       ...arrayCopy[index],
-      HasAccess: !loadedUsers[index].HasAccess,
+      hasAccess: !users[index].hasAccess,
     };
     console.log(arrayCopy);
     setUsers(arrayCopy);
   };
 
+//{loadedUsers && loadedUsers?.docs && (loadedUsers?.docs as any).map((row, i) =>
   return (
       <div>
         <TableContainer component={Paper}>
@@ -79,7 +83,7 @@ export const ManageAccessTab: FC = (props) => {
                   <TextField
                       variant={"outlined"}
                       size={"small"}
-                      label={"Name"}
+                      label={"name"}
                       value={nameFilter}
                       onChange={(e) => setNameFilter(e.target.value)}
                   />
@@ -88,7 +92,7 @@ export const ManageAccessTab: FC = (props) => {
                   <TextField
                       variant={"outlined"}
                       size={"small"}
-                      label={"Surname"}
+                      label={"surname"}
                       value={surnameFilter}
                       onChange={(e) => setSurnameFilter(e.target.value)}
                   />
@@ -117,20 +121,19 @@ export const ManageAccessTab: FC = (props) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {/*{loadedUsers && loadedUsers?.docs && (loadedUsers?.docs as any).map((row, i) =>*/}
-              {users.map((row, i) =>
-                  applyFilter(row.Name, nameFilter) &&
-                  applyFilter(row.Surname, surnameFilter) &&
-                  applyFilter(row.CardID, cardIdFilter) &&
-                  row.HasAccess === hasAccessFilter ? (
-                      <TableRow key={row.CardID}>
-                        <MyTableCell>{row.Name}</MyTableCell>
-                        <MyTableCell>{row.Surname}</MyTableCell>
-                        {<MyTableCell>{row.CardID}</MyTableCell>}
+              {users?.map((row, i) =>
+                  applyFilter(row.name, nameFilter) &&
+                  applyFilter(row.surname, surnameFilter) &&
+                  applyFilter(row.cardID, cardIdFilter) &&
+                  row.hasAccess === hasAccessFilter ? (
+                      <TableRow key={row.cardID}>
+                        <MyTableCell>{row.name}</MyTableCell>
+                        <MyTableCell>{row.surname}</MyTableCell>
+                        {<MyTableCell>{row.cardID}</MyTableCell>}
 
                         <TableCell align="center">
                           <Checkbox
-                              checked={row.HasAccess}
+                              checked={row.hasAccess}
                               onChange={() => onCheckboxChange(i)}
                           />
                         </TableCell>

@@ -4,7 +4,6 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {createMuiTheme, MuiThemeProvider} from "@material-ui/core";
-import firebase from "firebase";
 
 const theme = createMuiTheme({
     palette: {

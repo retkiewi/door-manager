@@ -19,19 +19,19 @@ import {firebaseApp} from "../../firebaseApp";
 
 export const UserManagerView: FC = (props) => {
   type User = {
-    Name: string;
-    Surname: string;
-    CardID: string;
-    HasAccess: boolean;
+    name: string;
+    surname: string;
+    cardID: string;
+    hasAccess: boolean;
   };
 
   // function createUserData(
-  //     Name: string,
-  //     Surname: string,
-  //     CardID: string,
-  //     HasAccess: boolean
+  //     name: string,
+  //     surname: string,
+  //     cardID: string,
+  //     hasAccess: boolean
   // ) {
-  //   return { Name: Name, Surname: Surname, CardID: CardID, HasAccess: HasAccess };
+  //   return { name: name, surname: surname, cardID: cardID, hasAccess: hasAccess };
   // }
 
   const MyTableCell = styled(TableCell)({
@@ -52,23 +52,26 @@ export const UserManagerView: FC = (props) => {
 
   const [hasAccessFilter, setHasAccessFilter] = useState(false);
 
-  const [loadedUsers, loading, error] = useCollection(firebaseApp.firestore().collection('Users'));
+  // const usersCollection = firebaseApp.firestore().collection("Users");
+  //
+  // const loadedUsers = (await usersCollection.get()).docs;
+  // const [loadedUsers, loading, error] = useCollection(firebaseApp.firestore().collection('Users'));
 
-  const [users, setUsers] = useState<User[]>(loadedUsers?.docs);
+  // const [users, setUsers] = useState<User[]>(loadedUsers);
 
-  console.log(loadedUsers?.docs[0].data());
-  console.log(loadedUsers?.docs[0].id);
+  // console.log(loadedUsers[0].data().name);
+  // console.log(loadedUsers[0].id);
 
-  const onCheckboxChange = (index) => {
-    const arrayCopy = [...loadedUsers];
-    arrayCopy[index] = {
-      ...arrayCopy[index],
-      HasAccess: !loadedUsers[index].HasAccess,
-    };
-    console.log(arrayCopy);
-    setUsers(arrayCopy);
-  };
-  
+  // const onCheckboxChange = (index) => {
+  //   const arrayCopy = [...loadedUsers];
+  //   arrayCopy[index] = {
+  //     ...arrayCopy[index],
+  //     hasAccess: !loadedUsers[index].hasAccess,
+  //   };
+  //   console.log(arrayCopy);
+  //   setUsers(arrayCopy);
+  // };
+
   return (
       <div className={styles.DoorManagerView}>
         <TableContainer component={Paper}>
@@ -79,7 +82,7 @@ export const UserManagerView: FC = (props) => {
                   <TextField
                       variant={"outlined"}
                       size={"small"}
-                      label={"Name"}
+                      label={"name"}
                       value={nameFilter}
                       onChange={(e) => setNameFilter(e.target.value)}
                   />
@@ -88,7 +91,7 @@ export const UserManagerView: FC = (props) => {
                   <TextField
                       variant={"outlined"}
                       size={"small"}
-                      label={"Surname"}
+                      label={"surname"}
                       value={surnameFilter}
                       onChange={(e) => setSurnameFilter(e.target.value)}
                   />
@@ -103,29 +106,30 @@ export const UserManagerView: FC = (props) => {
                   />
                 </TableCell>
                 <TableCell align="center">
-                        <Button variant={"contained"}>ADD</Button>
+                  <Button variant={"contained"}>ADD</Button>
                 </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {loadedUsers && loadedUsers.docs && (loadedUsers.docs as any).map((row, i) =>
-                  applyFilter(row.Name, nameFilter) &&
-                  applyFilter(row.Surname, surnameFilter) &&
-                  applyFilter(row.CardID, cardIdFilter) &&
-                  row.HasAccess === hasAccessFilter ? (
-                      <TableRow key={row.id}>
-                        <MyTableCell>{row.Name}</MyTableCell>
-                        <MyTableCell>{row.Surname}</MyTableCell>
-                        {<MyTableCell>{row.CardID}</MyTableCell>}
-                        <TableCell align="center">
-                          <Button variant={"contained"}>Remove</Button>
-                        </TableCell>
-                      </TableRow>
-                  ) : null
-              )}
+
             </TableBody>
           </Table>
         </TableContainer>
       </div>
   );
+  // {users.map((row, i) =>
+  //     applyFilter(row.name, nameFilter) &&
+  //     applyFilter(row.surname, surnameFilter) &&
+  //     applyFilter(row.cardID, cardIdFilter) &&
+  //     row.hasAccess === hasAccessFilter ? (
+  //         <TableRow key={row.cardID}>
+  //           <MyTableCell>{row.name}</MyTableCell>
+  //           <MyTableCell>{row.surname}</MyTableCell>
+  //           {<MyTableCell>{row.cardID}</MyTableCell>}
+  //           <TableCell align="center">
+  //             <Button variant={"contained"}>Remove</Button>
+  //           </TableCell>
+  //         </TableRow>
+  //     ) : null
+  // )}
 };
