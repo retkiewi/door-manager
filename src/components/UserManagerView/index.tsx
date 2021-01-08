@@ -13,8 +13,7 @@ import {
 } from "@material-ui/core";
 import {FC, useState} from "react";
 import styles from "../DoorManagerView/styles.module.css";
-import firebase from "firebase";
-import {useCollection, useCollectionData} from "react-firebase-hooks/firestore";
+import {useCollection} from "react-firebase-hooks/firestore";
 import {firebaseApp} from "../../firebaseApp";
 
 export const UserManagerView: FC = (props) => {

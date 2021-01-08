@@ -47,7 +47,7 @@ export const ViewLogsTab: FC = (props) => {
                 <TableBody>
                     {loading ? <div>Loading data</div> : (loadedLogs && loadedLogs?.docs && (loadedLogs?.docs as any).map((row, i) =>
                         <TableRow key={row.id}>
-                            <MyTableCell>{getDate(row.data().time.seconds * 1000)}</MyTableCell>
+                            <MyTableCell>{getDate(row.data().time)}</MyTableCell>
                             <MyTableCell>{row.data().name}</MyTableCell>
                             <MyTableCell>{row.data().surname}</MyTableCell>
                             <MyTableCell>{row.data().cardID}</MyTableCell>

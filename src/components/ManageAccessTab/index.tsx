@@ -11,7 +11,7 @@ import {
   TextField
 } from "@material-ui/core";
 import {FC, useState} from "react";
-import {useCollection, useCollectionData} from "react-firebase-hooks/firestore";
+import {useCollection} from "react-firebase-hooks/firestore";
 import {firebaseApp} from "../../firebaseApp";
 
 export const ManageAccessTab: FC = (props) => {
