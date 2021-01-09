@@ -19,19 +19,19 @@ export const MqttClient = () => {
     } else {
         console.log('Failed connection to broker');
     }
-    client.subscribe('website','door');
-    console.log('Subscribed website');
+    client.subscribe('door1_scan','door1_access');
+    console.log('Subscribed door1_scan');
 
     client.on('message', function (topic, message) {
         console.log('Received message with "'+topic+'" topic"');
-        if(topic === 'website') {
+        if(topic === 'door1_scan') {
             if(checkAccess(message.toString())) {
-                client.publish('door', 'granted');
+                client.publish('door1_access', 'OPEN');
             } else {
-                client.publish('door', 'denied');
+                client.publish('door1_access', 'DENIED');
             }
         }
-        if(topic === 'door') {
+        if(topic === 'door1_access') {
             console.log("besciak besciak ty chuju");
         }
         client.end();
