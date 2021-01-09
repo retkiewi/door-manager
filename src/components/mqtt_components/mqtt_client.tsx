@@ -28,7 +28,7 @@ export const MqttClient = () => {
             if(checkAccess(message.toString())) {
                 client.publish('door1_access', 'OPEN');
             } else {
-                client.publish('door1_access', 'DENIED');
+                client.publish('door1_access', 'DENY');
             }
         }
         if(topic === 'door1_access') {
