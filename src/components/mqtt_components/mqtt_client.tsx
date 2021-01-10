@@ -10,16 +10,16 @@ export const MqttClient = () => {
 
     const mqtt = require('mqtt');
     const options = {
-        protocol: 'mqtts',
+        protocol: 'mqtt',
         clientId: 'jp2x2137'
     };
-    const client = mqtt.connect('mqtt://test.mosquitto.org:8081', options);
+    const client = mqtt.connect('mqtt://172.16.25.129:8883', options);
     if(client) {
         console.log('Connected to broker');
     } else {
         console.log('Failed connection to broker');
     }
-    client.subscribe('door1_scan','door1_access');
+    client.subscribe('door1_scan');
     console.log('Subscribed door1_scan');
 
     client.on('message', function (topic, message) {
@@ -31,14 +31,12 @@ export const MqttClient = () => {
                 client.publish('door1_access', 'DENY');
             }
         }
-        if(topic === 'door1_access') {
-            console.log("besciak besciak ty chuju");
-        }
         client.end();
     });
 
     function checkAccess (cardID) : boolean {
         console.log("Checking access for "+cardID);
+        let flag = false;
         if(loadedUsers?.docs.length > 0) {
             (loadedUsers?.docs as any).forEach(user => {
                 if(user.data().cardID === cardID) {
@@ -50,7 +48,7 @@ export const MqttClient = () => {
                             name: user.data().name,
                             time: Date.now()
                         }).then(() => console.log("Access granted to "+cardID));
-                        return true;
+                        flag = true;
                     } else {
                         firebaseApp.firestore().collection("Logs").add({
                             cardID: user.data().cardID,
@@ -58,13 +56,12 @@ export const MqttClient = () => {
                             surname: user.data().surname,
                             name: user.data().name,
                             time: Date.now()
-                        }).then(() => console.log("Access denied to "+cardID));
-                        return false;
+                        });
                     }
                 }
             });
         }
-        console.log("Card doesn't exist");
-        return false;
+        if (!flag) {console.log("Access denied to "+cardID)}
+        return flag;
     }
 };
